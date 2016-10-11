@@ -108,16 +108,36 @@ open class SessionDelegate: NSObject {
 #if !os(watchOS)
 
     /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:readClosedFor:)`.
-    open var streamTaskReadClosed: ((URLSession, URLSessionStreamTask) -> Void)?
+    @available (iOS 9.0, *)
+    open var streamTaskReadClosed: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get { return _streamTaskReadClosed as? ((URLSession, URLSessionStreamTask) -> Void) }
+        set { _streamTaskReadClosed = newValue }
+    }
+    private var _streamTaskReadClosed: Any?
 
     /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:writeClosedFor:)`.
-    open var streamTaskWriteClosed: ((URLSession, URLSessionStreamTask) -> Void)?
+    @available (iOS 9.0, *)
+    open var streamTaskWriteClosed: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get { return _streamTaskWriteClosed as? ((URLSession, URLSessionStreamTask) -> Void) }
+        set { _streamTaskWriteClosed = newValue }
+    }
+    private var _streamTaskWriteClosed: Any?
 
     /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:betterRouteDiscoveredFor:)`.
-    open var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)?
+    @available (iOS 9.0, *)
+    open var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get { return _streamTaskBetterRouteDiscovered as? ((URLSession, URLSessionStreamTask) -> Void) }
+        set { _streamTaskBetterRouteDiscovered = newValue }
+    }
+    private var _streamTaskBetterRouteDiscovered: Any?
 
     /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:streamTask:didBecome:outputStream:)`.
-    open var streamTaskDidBecomeInputAndOutputStreams: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)?
+    @available (iOS 9.0, *)
+    open var streamTaskDidBecomeInputAndOutputStreams: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)? {
+        get { return _streamTaskDidBecomeInputAndOutputStreams as? ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void) }
+        set { _streamTaskDidBecomeInputAndOutputStreams = newValue }
+    }
+    private var _streamTaskDidBecomeInputAndOutputStreams: Any?
 
 #endif
 
@@ -166,17 +186,19 @@ open class SessionDelegate: NSObject {
         #endif
 
         #if !os(watchOS)
-            switch selector {
-            case #selector(URLSessionStreamDelegate.urlSession(_:readClosedFor:)):
-                return streamTaskReadClosed != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:writeClosedFor:)):
-                return streamTaskWriteClosed != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:betterRouteDiscoveredFor:)):
-                return streamTaskBetterRouteDiscovered != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:streamTask:didBecome:outputStream:)):
-                return streamTaskDidBecomeInputAndOutputStreams != nil
-            default:
-                break
+            if #available(iOS 9.0, *) {
+                switch selector {
+                case #selector(URLSessionStreamDelegate.urlSession(_:readClosedFor:)):
+                    return streamTaskReadClosed != nil
+                case #selector(URLSessionStreamDelegate.urlSession(_:writeClosedFor:)):
+                    return streamTaskWriteClosed != nil
+                case #selector(URLSessionStreamDelegate.urlSession(_:betterRouteDiscoveredFor:)):
+                    return streamTaskBetterRouteDiscovered != nil
+                case #selector(URLSessionStreamDelegate.urlSession(_:streamTask:didBecome:outputStream:)):
+                    return streamTaskDidBecomeInputAndOutputStreams != nil
+                default:
+                    break
+                }
             }
         #endif
 
@@ -633,6 +655,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     }
 }
 
+/*
 // MARK: - URLSessionStreamDelegate
 
 #if !os(watchOS)
@@ -679,3 +702,4 @@ extension SessionDelegate: URLSessionStreamDelegate {
 }
 
 #endif
+*/
